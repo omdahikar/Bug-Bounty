@@ -1,0 +1,71 @@
+**business logic vuln**
+
+1. **change another user's password**
+
+**functionality is that user need existing password with username but admin does not need existing password**
+
+**attack**
+
+**a regular user submits a request to change another user's password by simply not supplying the existing password**
+
+1. **Bypass checkout functionality**
+
+**funcitionality is that all the steps are in order to user**
+
+**.browse the product catalog and add items to the shopping basket.**
+
+**.Return to the shopping basket and finalize the order**
+
+**. enter the payment**
+
+**. enter delivery info**
+
+**developer assumed that users would always access the stages in the intended sequence**
+
+**attack**
+
+**skip 3rd number entering the payment**
+
+1. **beating a business limit**
+
+**in banking transfer a to b, there is a limit of money to transfer**
+
+**will use -ve higher value from b to a though**
+
+1. **cheating on bulk discounts**
+
+**user adds items in basket**
+
+**if one of the qualifies for a bulk discount, a discount is applied on entire cart**
+
+**user purchases order**
+
+**assuming that user will chose the bundle after the discount is applied**
+
+**attack**
+
+**user adds items in basket including item that gives the user a bulk discount**
+
+**the discount is applied on the entire cart**
+
+**user goes back to the cart and removes the item that entitled him to a discount**
+
+**although the item is removed, the discount is still approved, and the user purchases the order at a discount price with burp suite**
+
+**for user password change is the all CIA trade**
+
+**for other only one CIA trade**
+
+**How to find and exploit**
+
+**map entire application each and every component**
+
+**access to code**
+
+**for each component determine:**
+
+**the potential business flow**
+
+**the assumptions that could have been made by the developer/ architects during the design phase**
+
+**test each component for all possible use cases that are outside of the intended business flow**
