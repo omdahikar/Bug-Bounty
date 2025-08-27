@@ -1,0 +1,40 @@
+all best bapp for burpsuite
+
+**Logger++: Logs all HTTP/S requests and responses,
+allowing for easy filtering, searching, and exporting of logs.**
+
+**ActiveScan++: Enhances Burp Suite's default scanner
+with more comprehensive security scans.**
+
+**CO2: Provides various tools and test scenarios for
+different security vulnerabilities.**
+
+**Hackvertor: Allows you to create and use custom tags
+to transform data in various ways.**
+
+**Autorize: Automates authorization checks in web
+applications, helping to identify authentication vulnerabilities.**
+
+**Turbo Intruder: Enables automated attacks, even where
+extreme speed or complexity is required.**
+
+**Param Miner: Identifies hidden, unlinked parameters,
+useful for finding web cache poisoning vulnerabilities.**
+
+**Burp Bounty: Helps you build your own scan checks for
+use with Burp Scanner.**
+
+**BurpJS Link Finder: Helps identify and discover
+JavaScript-based links within web applications.**
+
+**J2EEScan: A plugin for Burp Suite Proxy to test J2EE
+web applications.**
+
+**Retire.js: Helps identify outdated JavaScript
+libraries.**
+
+**Flow: Provides a graphical view of the HTTP requests
+and responses that pass through Burp Suite.**
+
+**JSON Beautifier: Helps to format JSON data for easier
+readability.**
