@@ -1,0 +1,123 @@
+- *****Authentication Vulnerablities**
+- ***what are the authentication flaws?**
+
+**they say who they are..**
+
+**html form based authentication**
+
+**multifactor mech**
+
+**windows integrated authentication using NTLM kerberos**
+
+**Examples**
+
+1. **weak passwd requirement**
+
+**very short or blank**
+
+**common dic words or names**
+
+**is same as username**
+
+**use of default pass**
+
+**missing or ineffective MFA**
+
+**shared password --> credential stuffing**
+
+![image.png](attachment:48f745b4-7a97-45d7-8c20-a839acb44dbf:image.png)
+
+1. **improper restriction of authentication attempts**
+
+**brute force --> login pages, otp/mfa page, change password page**
+
+1. **verbose error msg**
+
+**the app. outputs a verbose error msg that allows for username enumeration**
+
+**incorrect username and incorrect pass**
+
+1. **vuln transission of credentials**
+
+**as http unencrypted connection**
+
+1. **insecure forgot pass funtionality**
+
+**asking question --> can be bypass by osint**
+
+1. **multistage login mechanism**
+
+**insecure implementation of the MFA function**
+
+**It can be accesed by any user just using the username and using the code of hacker**
+
+1.  **Insecure storage of credentials**
+- **Insecure storage of credentials**
+
+**Use plain text, encrypted, or weekly hashed password data stores.**
+
+- ***impact of authentication vuln**
+
+**CIA triade all affected**
+
+**Can be chain it Remote code execution**
+
+- ***how do you find and exploit them ?**
+
+**1. Review the website for any description of the rules 
+2. If self registration is possible , attempts to register several accounts with different kinds of weak passwords to discover what rules are in place .**
+
+- **Review the website for any description of the rules**
+- **If self registration is possible , attempts to register several accounts with different kinds of weak passwords to discover what rules are in place .**
+
+**Very short or blank**
+
+**Common dictionary words or names**
+
+**Pass is the same as username**
+
+**1. If you ctrl a single account and pass change is possible , attempt to change the pass to various weak values
+2. Attempt many incorrect to see if attempts are limited or not**
+
+- **If you ctrl a single account and pass change is possible , attempt to change the pass to various weak values**
+- **Attempt many incorrect to see if attempts are limited or not**
+
+**If not then use brute force , tools: hydra, burp intruder etc**
+
+**If it lockout the see if lockout mech is also vuln or not moniter req and response**
+
+**1. Send with valid and invalid username and valid username to see what it responds , review for differences in status code, any redirects  , information displayed on the screen , html page source , or even the time to process the request 
+2. Moniter traffic if for the instances where credentials are submitted in a url query string or as a cookies , or are transmitted back from the server to the client
+3. Attempt to access the application over http and if there are any redirections to https 
+4. Find the functionality of forgot password and walkthrough using an account you have control of while intercepting the requests/responses in a proxy.
+5. Review the functionality to determine if it alows for username enumeration or bruteforce attacks 
+6. If application generates an email containing a recovery URL , obtain a number of these URLs and attempts to identify any predictable patterns or sensitive information included in the URL. Also check if the URL is long lived and does not expire
+7. Identify if the application uses a multistage login mech
+8. If it does , perform a complete walkthrough using an account you have ctrl of while intercepting the requests / responses in a proxy 
+9. Review the funtionality to determine if it allows for username enumeration or bruteforce attack**
+
+- **Send with valid and invalid username and valid username to see what it responds , review for differences in status code, any redirects , information displayed on the screen , html page source , or even the time to process the request**
+- **Moniter traffic if for the instances where credentials are submitted in a url query string or as a cookies , or are transmitted back from the server to the client**
+- **Attempt to access the application over http and if there are any redirections to https**
+- **Find the functionality of forgot password and walkthrough using an account you have control of while intercepting the requests/responses in a proxy.**
+- **Review the functionality to determine if it alows for username enumeration or bruteforce attacks**
+- 
+- **If application generates an email containing a recovery URL , obtain a number of these URLs and attempts to identify any predictable patterns or sensitive information included in the URL. Also check if the URL is long lived and does not expire**
+- **Identify if the application uses a multistage login mech**
+- **If it does , perform a complete walkthrough using an account you have ctrl of while intercepting the requests / responses in a proxy**
+- **Review the funtionality to determine if it allows for username enumeration or bruteforce attack**
+
+![image.png](attachment:733b8107-7c21-44c2-91e1-18fb97c9e620:image.png)
+
+![image.png](attachment:1b35086b-8d00-43a2-843c-840df2914509:image.png)
+
+**Web scanner : burp suite pro , arachni , owasp zap ,
+wapti , acunetix , w3af**
+
+- ***how do you prevent them?**
+
+![image.png](attachment:6a330a9a-1cb2-4308-96d7-6048a685d463:image.png)
+
+![image.png](attachment:588897ac-5d08-47c6-a175-6d9378d0dd76:image.png)
+
+![image.png](attachment:6eb26b96-0973-46c5-9817-be977b117ec7:image.png)
