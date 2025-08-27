@@ -1,0 +1,191 @@
+1. nmap -A -F -T1 10.10.10.223 -v
+2. fuzz thesting
+
+ffuf -w /usr/share/wordlist/disb/common.txt -u http://tenet.htb/FUZZ -fc 403 -p 2
+
+//not using 403 pages and using slowly on 2 we can make it -p 1 very slow
+
+1. github seclist is very good
+2. use shodhan for recon
+
+shodhan on terminal install first
+
+then
+
+shodan init <api key>
+
+shodan info
+
+shodan scan -h
+
+shodan count wordpress
+
+shodan count wordpress 1.4.7
+
+shodan download wordpressfile "wordpress 1.4.7"
+
+apt intall gedit  --> web json viewer
+
+gunzip wordpressfile.json.zip
+
+gedit wordpressfile.json
+
+host yahoo.com -->range of ip addresses running
+
+ping yahoo.com --> for ip
+
+burp instercept --> for ip
+
+shodan host <ip of website>
+
+shodan scan submit <ip>
+
+bgp.he.net
+
+shodan cheat sheet
+
+cherry tree for notes taking
+
+wapalizer for versions
+
+write all the notes very important
+
+https://sub.domain.com/blog/article/search?param=42
+
+wfuzz for subdomain fuzzing
+
+we can also fuzz for directories
+
+https://howdns.works/ep4/
+
+dig axfir @<ip> friendzone >zone
+
+dig axfir @<ip> friendzoneportal.red >>zone --> append to zone file
+
+cat zone | grep friendzone | grep IN | awk '{print $1}'| sort
+
+whois
+
+nslookup
+
+sublist3r
+
+dirbuster
+
+harvester -d (domainname) -b google
+
+crt.sh --> for certificates of domain
+
+wayback machine --> very important
+
+for downloadig wayback machine we need go language
+
+apt install golang
+
+go install <githublink>
+
+cd ~/go/bin
+
+ls
+
+./waybackurls -h
+
+gedit yahoo.txt --> yahoo.com
+
+cat yahoo.txt | ./waybackurls > yahoo.urls
+
+amass enum -passive -d yahoo.com --> sub domain gives
+
+gedit yahoo.txt --> paste all the subdomains
+
+cat yahoo.txt | ./waybackurls > yahoo.urls
+
+wc -l yahoo.urls
+
+sudo apt install httprobe
+
+work same as waybackmachine
+
+cat yahoo.urls | httprobe > valid.urls
+
+sublist3r -d yahoo.com
+
+open multiple urls firefox extention is use to open multiple urls at a time
+
+amass is way use full for many sub domains than sublist3r
+
+https://w3techs.com/  --> for language used in website and version services
+
+we can use inspect>debugger> js files
+
+nmap -A -p35,445,135,139,80,443 <ip> -v
+
+ffuf -u <url use FUZZ for acutual where to fuzz subdomain or directory> -w /usr/share/wordlist/dirb/common.txt -p 1 -fc <page error number you don't want like 301>
+
+we can you fuff for api end point testing (dir of api)
+
+dirb <url>
+
+wpscan --help
+
+wpscan --url <url> -e ap --plugins-detection aggressive
+
+wpscan for wordpress applications
+
+sudo nmap -f
+
+sudo nmap -D RND:5
+
+sudo nmap -D 192.168.1.1,..,..,..,ME 192.168.1.2
+
+sudo nmap -S 8.8.8.8 -Pn -e th0 -g 7777
+
+sudo nmap -sF
+
+Sudo nmap --script auth <ip> -sS
+
+Sudo nmap --script exploit <ip> -sS
+
+tips
+
+take newer programs to attack
+
+take program with large scope
+
+take program which you have interest into , so we learn more things
+
+new members should take not paid bug programs
+
+follow the developers on the social media which are realted to the program
+
+when developer launch new sub domains and new area of website will post there code and services on github
+
+sublist3r -d yahoo.com
+
+ffuf -w /usr/share/wordlists/dirb/small.txt -u https://www.yahoo.com/FUZZ
+
+-p --> for delay , -fl 1 -->(filter by line)
+
+google dorks
+
+settings
+
+html hacking
+
+/page1 , /page2 , /page3 .. page source
+
+hidden <<<<>>>>
+
+plain texts all directories
+
+hacker101 ctfs to solve
+
+overthewire
+
+tryhackme juiceshop
+
+IDOR that is logical and business errors like id and username password or cookies to watchout
+
+let see if there is username and password in the url then it is information disclosure
+
+for the cookies to watch we use ciberchef->magic->
